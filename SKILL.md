@@ -20,6 +20,14 @@ npx skills add symbis/bootstrapping-symbis-code-app-template --global --agent co
 
 Keep `--copy` so installing the bootstrap skill itself does not depend on Windows symlink support. For access failures, read [references/private-github-install.md](references/private-github-install.md).
 
+## Choose the project folder
+
+For a new installation, use an exact target path supplied by the user. If the user has not supplied one, ask once:
+
+> What should the new project folder be called? I will create it under `~/Projects` on macOS or `$HOME\Projects` on Windows by default; you can also provide a different full path.
+
+Do not invent a generic name such as `MyApp`, silently slugify the answer, or infer the folder name from the template repository. Reject an empty name, `.` or `..`, path separators in a folder-name answer, and names invalid on the current OS. Resolve and show the absolute target in the plan before requesting approval. If the target is an existing checkout, use its current path without asking for a new name and never rename it.
+
 ## Modes
 
 - **New:** authenticate through the browser, clone the canonical private Azure DevOps template, verify symlinks, start a fresh `main` repository, then run `make install`.
@@ -27,7 +35,7 @@ Keep `--copy` so installing the bootstrap skill itself does not depend on Window
 
 ## Workflow
 
-1. Determine `win32` versus `darwin`, the target path, and whether the target is new or an existing checkout. Refuse a non-empty unrelated target.
+1. Determine `win32` versus `darwin`, obtain the target through the folder intake above, and classify it as new or an existing checkout. Refuse a non-empty unrelated target.
 2. Resolve the platform wrapper relative to this `SKILL.md`:
    - Windows: `scripts/bootstrap-template.ps1`
    - macOS: `scripts/bootstrap-template.sh`
