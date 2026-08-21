@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bootstrap Symbis Code App"
+  short_description: "Prepare the template on Windows or macOS"
+  default_prompt: "Use $bootstrapping-symbis-code-app-template to install or repair the Symbis Code App template on this machine."
