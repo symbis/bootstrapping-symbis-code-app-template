@@ -80,11 +80,13 @@ function gnuMakeAvailable() {
 
 test('requires absolute targets and accepts an empty current directory by its absolute path', async () => {
   const empty = temporaryDirectory();
-  assert.equal(normalizeTarget(empty, 'darwin'), empty);
+  const currentPlatform = process.platform === 'win32' ? 'win32' : 'darwin';
+  assert.equal(normalizeTarget(empty, currentPlatform), empty);
   assert.equal(await classifyTarget(empty), 'new');
-  assert.throws(() => normalizeTarget('.', 'darwin'), /absolute path/);
-  assert.throws(() => normalizeTarget('Pizza', 'darwin'), /absolute path/);
-  assert.throws(() => normalizeTarget('/', 'darwin'), /filesystem root/);
+  assert.throws(() => normalizeTarget('.', currentPlatform), /absolute path/);
+  assert.throws(() => normalizeTarget('Pizza', currentPlatform), /absolute path/);
+  const filesystemRoot = process.platform === 'win32' ? 'C:\\' : '/';
+  assert.throws(() => normalizeTarget(filesystemRoot, currentPlatform), /filesystem root/);
   assert.equal(normalizeTarget('C:\\Users\\developer\\Projects\\Pizza', 'win32'), 'C:\\Users\\developer\\Projects\\Pizza');
 });
 
@@ -257,7 +259,8 @@ test('the Node-free macOS wrapper prints the complete workflow', (context) => {
 });
 
 test('the Windows PowerShell wrapper exposes the same full-plan contract without PowerShell 7 syntax', () => {
-  const wrapper = readFileSync(join(SKILL_ROOT, 'scripts', 'bootstrap-template.ps1'), 'utf8');
+  const wrapperPath = join(SKILL_ROOT, 'scripts', 'bootstrap-template.ps1');
+  const wrapper = readFileSync(wrapperPath, 'utf8');
   assert.doesNotMatch(wrapper, /\?\?/);
   for (const required of [
     'prove-repository-access', 'clone-template', 'inspect-safe-chain-choice',
@@ -269,7 +272,7 @@ test('the Windows PowerShell wrapper exposes the same full-plan contract without
   if (process.platform === 'win32') {
     const powershell = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
     const result = spawnSync(powershell, [
-      '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', wrapper,
+      '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', wrapperPath,
       '--target', 'C:\\Temp\\SymbisBootstrapPlanProbe', '--mode', 'new', '--auth', 'auto', '--plan',
     ], {
       encoding: 'utf8',
