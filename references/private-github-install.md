@@ -1,53 +1,30 @@
-# Skill distribution
+# Install from private Symbis GitHub
 
-## Local folder or zip
+The only supported distribution source is:
 
-`skills init` creates a blank skill scaffold; it does not import a received skill. Send this complete skill directory, extract it, and install from its local path. `--copy` keeps the installed version independent of the extracted source directory.
-
-```bash
-npx skills@latest add ./bootstrapping-symbis-code-app-template \
-  --global --agent codex --copy --yes
+```text
+symbis/bootstrapping-symbis-code-app-template
 ```
 
-The same command works in PowerShell; use the appropriate local path syntax.
-
-## Private GitHub repository
-
-Private GitHub works when Git can clone the repository and the current `skills` process receives GitHub API authentication. The CLI reads `GITHUB_TOKEN` or `GH_TOKEN`; do not paste or save a personal access token in a script, prompt, or skill file.
-
-Authenticate GitHub CLI once:
+The user must have access to this private repository. Check the existing GitHub CLI session and sign in only when required:
 
 ```bash
 gh auth status || gh auth login --web --git-protocol https
-gh auth setup-git
 ```
 
-Install on macOS with a process-scoped token:
+Install the skill globally for Codex:
 
 ```bash
-SKILL_GITHUB_TOKEN="$(gh auth token)"
-GH_TOKEN="$SKILL_GITHUB_TOKEN" npx skills@latest add <symbis-owner>/<skill-repository> \
-  --skill bootstrapping-symbis-code-app-template --global --agent codex --copy --yes
-unset SKILL_GITHUB_TOKEN
+npx skills add symbis/bootstrapping-symbis-code-app-template --global --agent codex --copy --yes
 ```
 
-Install from PowerShell:
+The same command works in native Windows PowerShell and macOS terminals. `skills` uses configured Git credentials first, then the authenticated GitHub CLI, then SSH. Do not retrieve, copy, print, or pass a GitHub token manually.
 
-```powershell
+If installation reports `Repository not found`, verify that the active GitHub account can view the repository:
+
+```bash
 gh auth status
-if ($LASTEXITCODE -ne 0) { gh auth login --web --git-protocol https }
-gh auth setup-git
-$SkillGitHubToken = gh auth token
-try {
-    $env:GH_TOKEN = $SkillGitHubToken
-    npx skills@latest add <symbis-owner>/<skill-repository> `
-        --skill bootstrapping-symbis-code-app-template --global --agent codex --copy --yes
-} finally {
-    Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
-    $SkillGitHubToken = $null
-}
+gh repo view symbis/bootstrapping-symbis-code-app-template
 ```
 
-Use the same temporary-token pattern around `npx skills@latest update` for a private source. A public GitHub repository needs no GitHub authentication.
-
-Sources: [skills CLI package documentation](https://www.npmjs.com/package/skills), [current token resolution](https://github.com/vercel-labs/skills/blob/main/src/skill-lock.ts), and [GitHub CLI authentication](https://cli.github.com/manual/gh_auth_login).
+Source: [official `skills` CLI private-repository documentation](https://github.com/vercel-labs/skills#private-repositories).

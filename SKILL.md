@@ -9,6 +9,17 @@ description: Use when installing the Symbis Code App template, preparing an exis
 
 Turn a fresh machine or existing checkout into a validated template workspace while preserving user files. Support native Windows PowerShell and macOS; do not require WSL or Git Bash.
 
+## Install this skill
+
+The canonical source is the private Symbis GitHub repository. Users need repository access and an authenticated GitHub CLI session.
+
+```bash
+gh auth status || gh auth login --web --git-protocol https
+npx skills add symbis/bootstrapping-symbis-code-app-template --global --agent codex --copy --yes
+```
+
+Keep `--copy` so installing the bootstrap skill itself does not depend on Windows symlink support. For access failures, read [references/private-github-install.md](references/private-github-install.md).
+
 ## Modes
 
 - **New:** authenticate through the browser, clone the canonical private Azure DevOps template, verify symlinks, start a fresh `main` repository, then run `make install`.
@@ -35,5 +46,3 @@ When repository prose contains the wrong shell syntax, treat the intended outcom
 - Never request, print, or persist a PAT/access token.
 - Do not run `code-init`, push, deploy, or change a Power Platform environment during template setup.
 - UAC, browser sign-in, MFA, and managed-device policy remain user or administrator trust boundaries.
-
-For local/zip installation and private GitHub publication, read [references/private-github-install.md](references/private-github-install.md).
