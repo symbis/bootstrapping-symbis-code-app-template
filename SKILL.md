@@ -11,14 +11,13 @@ Turn a fresh machine or existing checkout into a validated template workspace wh
 
 ## Install this skill
 
-The canonical source is the private Symbis GitHub repository. Users need repository access and an authenticated GitHub CLI session.
+The canonical source is the public Symbis GitHub repository. Installing the skill does not require a GitHub account or GitHub CLI authentication.
 
 ```bash
-gh auth status || gh auth login --web --git-protocol https
 npx skills add symbis/bootstrapping-symbis-code-app-template --global --agent codex --copy --yes
 ```
 
-Keep `--copy` so installing the bootstrap skill itself does not depend on Windows symlink support. For access failures, read [references/private-github-install.md](references/private-github-install.md).
+Keep `--copy` so installing the bootstrap skill itself does not depend on Windows symlink support. The skill is public, but the Azure DevOps template remains private: a new bootstrap automatically runs browser-based `az login` when no usable Azure DevOps token is available, and cloning succeeds only for an account that already has repository access.
 
 ## Choose the project folder
 
